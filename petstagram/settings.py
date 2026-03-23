@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
     'petstagram.photos.apps.PhotosConfig',
     'petstagram.pets.apps.PetsConfig',
     'petstagram.common.apps.CommonConfig',
