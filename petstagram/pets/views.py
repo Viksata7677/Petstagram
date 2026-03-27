@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
+from petstagram.pets.forms import PetAddForm
 from petstagram.pets.models import Pet
 
 
@@ -7,7 +8,17 @@ from petstagram.pets.models import Pet
 
 
 def pet_add(request):
-    return render(request, 'pets/pet-add-page.html')
+    form = PetAddForm(request.POST or None)
+
+    if request.metod == 'POST':
+        if form.is_valid():
+            form.save()
+            redirect('profile-details', pk=1)
+
+    context = {
+        'form': form
+    }
+    return render(request, 'pets/pet-add-page.html', context)
 
 
 def pet_details(request, username: str, pet_slug: str):
