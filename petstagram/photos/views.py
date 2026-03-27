@@ -52,3 +52,6 @@ def photo_edit(request, pk: int):
     return render(request, 'photos/photo-edit-page.html', context)
 
 
+def photo_delete(request, pk: int):
+    Photo.objects.get(pk=pk).delete()
+    return redirect('homepage')
