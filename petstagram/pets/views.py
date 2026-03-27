@@ -10,7 +10,7 @@ from petstagram.pets.models import Pet
 def pet_add(request):
     form = PetAddForm(request.POST or None)
 
-    if request.metod == 'POST':
+    if request.method == 'POST':
         if form.is_valid():
             form.save()
             redirect('profile-details', pk=1)
