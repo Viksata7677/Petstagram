@@ -13,7 +13,7 @@ def pet_add(request):
     if request.method == 'POST':
         if form.is_valid():
             form.save()
-            redirect('profile-details', pk=1)
+            return redirect('profile-details', pk=1)
 
     context = {
         'form': form
