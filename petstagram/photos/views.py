@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 
 from petstagram.common.forms import CommentForm
 from petstagram.photos.forms import PhotoAddForm, PhotoEditForm
@@ -46,21 +46,31 @@ def photo_details(request, pk: int):
     return render(request, 'photos/photo-details-page.html', context)
 
 
-def photo_edit(request, pk: int):
-    photo = Photo.objects.get(pk=pk)
-    form = PhotoEditForm(request.POST or None, instance=photo)
+class PhotoEditPage(UpdateView):
+    model = Photo
+    form_class = PhotoEditForm
+    template_name = 'photos/photo-edit-page.html'
 
-    if request.method == 'POST':
-        if form.is_valid():
-            form.save()
-            return redirect('photo-details', pk)
+    def get_success_url(self):
+        return reverse_lazy('photo-details', kwargs={'pk': self.object.pk})
 
-    context = {
-        'form': form,
-        'photo': photo
-    }
 
-    return render(request, 'photos/photo-edit-page.html', context)
+#
+# def photo_edit(request, pk: int):
+#     photo = Photo.objects.get(pk=pk)
+#     form = PhotoEditForm(request.POST or None, instance=photo)
+#
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             form.save()
+#             return redirect('photo-details', pk)
+#
+#     context = {
+#         'form': form,
+#         'photo': photo
+#     }
+#
+#     return render(request, 'photos/photo-edit-page.html', context)
 
 
 def photo_delete(request, pk: int):
