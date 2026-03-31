@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
 
 from petstagram.common.forms import CommentForm
 from petstagram.photos.forms import PhotoAddForm, PhotoEditForm
@@ -7,20 +9,26 @@ from petstagram.photos.models import Photo
 
 # Create your views here.
 
+class PhotoAddPage(CreateView):
+    model = Photo
+    template_name = 'photos/photo-add-page.html'
+    form_class = PhotoAddForm
+    success_url = reverse_lazy('homepage')
 
-def photo_add(request):
-    form = PhotoAddForm(request.POST or None, request.FILES or None)
-
-    if request.method == 'POST':
-        if form.is_valid():
-            form.save()
-            return redirect('homepage')
-
-    context = {
-        'form': form
-    }
-
-    return render(request, 'photos/photo-add-page.html', context)
+#
+# def photo_add(request):
+#     form = PhotoAddForm(request.POST or None, request.FILES or None)
+#
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             form.save()
+#             return redirect('homepage')
+#
+#     context = {
+#         'form': form
+#     }
+#
+#     return render(request, 'photos/photo-add-page.html', context)
 
 
 def photo_details(request, pk: int):
