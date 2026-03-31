@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DetailView
 
 from petstagram.common.forms import CommentForm
 from petstagram.photos.forms import PhotoAddForm, PhotoEditForm
@@ -31,19 +31,33 @@ class PhotoAddPage(CreateView):
 #     return render(request, 'photos/photo-add-page.html', context)
 
 
-def photo_details(request, pk: int):
-    photo = Photo.objects.get(pk=pk)
-    likes = photo.like_set.all()
-    comments = photo.comment_set.all()
-    comment_form = CommentForm()
+class PhotoDetailsView(DetailView):
+    model = Photo
+    template_name = 'photos/photo-details-page.html'
 
-    context = {
-        'photo': photo,
-        'likes': likes,
-        'comments': comments,
-        'comment_form': comment_form
-    }
-    return render(request, 'photos/photo-details-page.html', context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['likes'] = self.object.like_set.all()
+        context['comments'] = self.object.comment_set.all()
+        context['comment_form'] = CommentForm()
+
+        return context
+
+#
+# def photo_details(request, pk: int):
+#     photo = Photo.objects.get(pk=pk)
+#     likes = photo.like_set.all()
+#     comments = photo.comment_set.all()
+#     comment_form = CommentForm()
+#
+#     context = {
+#         'photo': photo,
+#         'likes': likes,
+#         'comments': comments,
+#         'comment_form': comment_form
+#     }
+#     return render(request, 'photos/photo-details-page.html', context)
 
 
 class PhotoEditPage(UpdateView):
