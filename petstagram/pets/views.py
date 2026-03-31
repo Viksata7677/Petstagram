@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
 
 from petstagram.common.forms import CommentForm
 from petstagram.pets.forms import PetAddForm, PetEditForm, PetDeleteForm
@@ -8,18 +10,24 @@ from petstagram.pets.models import Pet
 # Create your views here.
 
 
-def pet_add(request):
-    form = PetAddForm(request.POST or None)
+class PetAddView(CreateView):
+    model = Pet
+    form_class = PetAddForm
+    template_name = 'pets/pet-add-page.html'
+    success_url = reverse_lazy('profile-details', kwargs={'pk': 1})
 
-    if request.method == 'POST':
-        if form.is_valid():
-            form.save()
-            return redirect('profile-details', pk=1)
-
-    context = {
-        'form': form
-    }
-    return render(request, 'pets/pet-add-page.html', context)
+# def pet_add(request):
+#     form = PetAddForm(request.POST or None)
+#
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             form.save()
+#             return redirect('profile-details', pk=1)
+#
+#     context = {
+#         'form': form
+#     }
+#     return render(request, 'pets/pet-add-page.html', context)
 
 
 def pet_details(request, username: str, pet_slug: str):
