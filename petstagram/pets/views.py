@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, UpdateView
 
 from petstagram.common.forms import CommentForm
 from petstagram.pets.forms import PetAddForm, PetEditForm, PetDeleteForm
@@ -55,22 +55,34 @@ class PetDetailsPage(DetailView):
 #     return render(request, 'pets/pet-details-page.html', context)
 
 
-def pet_edit(request, username: str, pet_slug: str):
-    pet = Pet.objects.get(slug=pet_slug)
+class PetEditView(UpdateView):
+    model = Pet
+    template_name = 'pets/pet-edit-page.html'
+    slug_url_kwarg = 'pet_slug'
+    form_class = PetEditForm
 
-    form = PetEditForm(request.POST or None, instance=pet)
+    def get_success_url(self):
+        return reverse_lazy(
+            'pet-details', kwargs={'username': self.kwargs['username'], 'pet_slug': self.kwargs['pet_slug']}
+        )
 
-    if request.method == 'POST':
-        if form.is_valid():
-            form.save()
-            return redirect('pet-details', username, pet_slug)
 
-    context = {
-        'form': form,
-        'pet': pet
-    }
-
-    return render(request, 'pets/pet-edit-page.html', context)
+# def pet_edit(request, username: str, pet_slug: str):
+#     pet = Pet.objects.get(slug=pet_slug)
+#
+#     form = PetEditForm(request.POST or None, instance=pet)
+#
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             form.save()
+#             return redirect('pet-details', username, pet_slug)
+#
+#     context = {
+#         'form': form,
+#         'pet': pet
+#     }
+#
+#     return render(request, 'pets/pet-edit-page.html', context)
 
 
 def pet_delete(request, username: str, pet_slug: str):
